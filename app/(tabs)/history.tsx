@@ -1,148 +1,93 @@
+// app/(tabs)/history.tsx
 import React from "react";
-import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
-import { BarChart } from "react-native-chart-kit";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { VictoryChart, VictoryBar, VictoryAxis, VictoryTheme } from "victory";
+import Svg from "react-native-svg";
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function HistoryScreen() {
-  const data = {
-    labels: ["17/01", "19/01", "21/01", "23/01", "25/01", "27/01", "29/01"],
-    datasets: [
-      {
-        data: [300, 200, 400, 250, 320, 280, 310],
-        color: () => "#00b894",
-      },
-      {
-        data: [250, 180, 350, 220, 290, 260, 280],
-        color: () => "#0984e3",
-      },
-    ],
-  };
-
-  const transactions = [
-    {
-      type: "Money Sent",
-      amount: "₦58,250.00",
-      date: "1st Jan, 08:32 - YAKUBU PRECIOUS AGBA",
-      status: "Success",
-    },
-    {
-      type: "Deposit",
-      amount: "₦58,250.00",
-      date: "1st Jan, 08:32 - YAKUBU PRECIOUS AGBA",
-      status: "Failed",
-    },
-    {
-      type: "Money Sent",
-      amount: "₦58,250.00",
-      date: "1st Jan, 08:32 - YAKUBU PRECIOUS AGBA",
-      status: "Success",
-    },
-    {
-      type: "Deposit",
-      amount: "₦58,250.00",
-      date: "1st Jan, 08:32 - YAKUBU PRECIOUS AGBA",
-      status: "Waiting",
-    },
-    {
-      type: "Money Sent",
-      amount: "₦58,250.00",
-      date: "1st Jan, 08:32 - YAKUBU PRECIOUS AGBA",
-      status: "Success",
-    },
-  ];
-
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Title */}
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>History</Text>
+      <Text style={styles.subtitle}>Ringkasan transaksi mingguan Anda</Text>
 
-      {/* Filter row */}
-      <View style={styles.filterRow}>
-        <Text style={styles.filterText}>All Transactions - All time</Text>
-        <View style={styles.iconRow}>
-          <Ionicons
-            name="cloud-download-outline"
-            size={20}
-            color="#555"
-            style={styles.icon}
-          />
-          <Ionicons
-            name="copy-outline"
-            size={20}
-            color="#555"
-            style={styles.icon}
-          />
-          <Ionicons name="filter-outline" size={20} color="#555" />
-        </View>
+      <View style={styles.card}>
+        <Svg width={screenWidth - 40} height={250}>
+          <VictoryChart
+            width={screenWidth - 40}
+            height={250}
+            theme={VictoryTheme.material}
+            domainPadding={25}
+            standalone={false}
+          >
+            <VictoryAxis
+              style={{
+                axis: { stroke: "transparent" },
+                grid: { stroke: "transparent" },
+                tickLabels: { fill: "#999", fontSize: 10 },
+              }}
+            />
+            <VictoryAxis
+              dependentAxis
+              style={{
+                axis: { stroke: "transparent" },
+                grid: { stroke: "#eee" },
+                tickLabels: { fill: "#999", fontSize: 10 },
+              }}
+            />
+            <VictoryBar
+              barWidth={18}
+              cornerRadius={6}
+              style={{
+                data: { fill: "#4CAF50" },
+              }}
+              data={[
+                { x: "17/01", y: 300 },
+                { x: "19/01", y: 200 },
+                { x: "21/01", y: 400 },
+                { x: "23/01", y: 250 },
+                { x: "25/01", y: 320 },
+                { x: "27/01", y: 280 },
+                { x: "29/01", y: 310 },
+              ]}
+            />
+          </VictoryChart>
+        </Svg>
       </View>
 
-      {/* Chart */}
-      <View style={styles.chartContainer}>
-        <Text style={styles.sectionTitle}>Weekly</Text>
-        <BarChart
-          data={data}
-          width={screenWidth - 32}
-          height={220}
-          yAxisLabel="₦"
-          yAxisSuffix=""
-          chartConfig={{
-            backgroundGradientFrom: "#ffffff",
-            backgroundGradientTo: "#ffffff",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            barPercentage: 0.5,
-          }}
-          style={styles.chart}
-        />
+      <View style={styles.listContainer}>
+        <Text style={styles.sectionTitle}>Transaksi Terbaru</Text>
 
-        {/* Total summary */}
-        <View style={styles.summaryRow}>
-          <Text style={[styles.summaryText, { color: "#00b894" }]}>
-            Deposit - ₦671,065.00
-          </Text>
-          <Text style={[styles.summaryText, { color: "#0984e3" }]}>
-            Sent - ₦491,005.00
-          </Text>
-        </View>
-      </View>
-
-      {/* Transaction List */}
-      <View style={{ marginTop: 16 }}>
-        {transactions.map((t, index) => (
-          <View key={index} style={styles.transactionCard}>
-            <View style={styles.rowBetween}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Ionicons
-                  name={
-                    t.type === "Deposit"
-                      ? "arrow-down-circle-outline"
-                      : "arrow-up-circle-outline"
-                  }
-                  size={22}
-                  color={t.type === "Deposit" ? "#00b894" : "#0984e3"}
-                />
-                <Text style={styles.transType}>{t.type}</Text>
-              </View>
-              <Text style={styles.amount}>{t.amount}</Text>
+        {[
+          {
+            type: "Deposit",
+            amount: "+Rp 500.000",
+            date: "02 Okt 2025",
+            color: "#4CAF50",
+          },
+          {
+            type: "Send",
+            amount: "-Rp 200.000",
+            date: "01 Okt 2025",
+            color: "#E53935",
+          },
+          {
+            type: "Deposit",
+            amount: "+Rp 300.000",
+            date: "29 Sep 2025",
+            color: "#4CAF50",
+          },
+        ].map((item, index) => (
+          <View style={styles.transactionItem} key={index}>
+            <View style={[styles.icon, { backgroundColor: item.color }]} />
+            <View style={styles.transactionInfo}>
+              <Text style={styles.transactionType}>{item.type}</Text>
+              <Text style={styles.transactionDate}>{item.date}</Text>
             </View>
-
-            <View style={styles.rowBetween}>
-              <Text style={styles.transDate}>{t.date}</Text>
-              <Text
-                style={[
-                  styles.status,
-                  t.status === "Success"
-                    ? { color: "#00b894" }
-                    : t.status === "Failed"
-                    ? { color: "#e74c3c" }
-                    : { color: "#f39c12" },
-                ]}
-              >
-                {t.status}
-              </Text>
-            </View>
+            <Text style={[styles.transactionAmount, { color: item.color }]}>
+              {item.amount}
+            </Text>
           </View>
         ))}
       </View>
@@ -151,96 +96,39 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
+  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
   title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#2d3436",
+    fontSize: 24,
+    fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 16,
+    marginTop: 10,
   },
-  filterRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  filterText: {
-    fontSize: 13,
-    color: "#636e72",
-  },
-  iconRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  icon: {
-    marginHorizontal: 6,
-  },
-  chartContainer: {
-    backgroundColor: "#f9f9f9",
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-  },
-  sectionTitle: {
+  subtitle: {
     fontSize: 14,
-    fontWeight: "500",
-    marginBottom: 4,
-    color: "#2d3436",
+    color: "#777",
+    textAlign: "center",
+    marginBottom: 20,
   },
-  chart: {
+  card: {
+    backgroundColor: "#f9f9f9",
     borderRadius: 16,
+    paddingVertical: 10,
+    marginBottom: 20,
+    elevation: 2,
   },
-  summaryRow: {
+  listContainer: { marginTop: 10 },
+  sectionTitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
+  transactionItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-    paddingHorizontal: 4,
-  },
-  summaryText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  transactionCard: {
-    backgroundColor: "#fff",
+    alignItems: "center",
+    backgroundColor: "#fafafa",
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
   },
-  rowBetween: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  transType: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#2d3436",
-    marginLeft: 8,
-  },
-  amount: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#2d3436",
-  },
-  transDate: {
-    fontSize: 11,
-    color: "#636e72",
-    marginTop: 4,
-  },
-  status: {
-    fontSize: 12,
-    fontWeight: "500",
-    marginTop: 4,
-  },
+  icon: { width: 12, height: 12, borderRadius: 6, marginRight: 12 },
+  transactionInfo: { flex: 1 },
+  transactionType: { fontWeight: "600", fontSize: 15 },
+  transactionDate: { color: "#999", fontSize: 12 },
+  transactionAmount: { fontWeight: "600", fontSize: 15 },
 });
